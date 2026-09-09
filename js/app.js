@@ -1,3 +1,5 @@
+import "./seed.js";
+import {getData , addData} from "./storage.js";
 const content = document.querySelector("#content");
 
 function renderPage() {
@@ -32,9 +34,96 @@ function renderPage() {
             content.innerHTML = "<h1>History</h1>";
             break;
 
+        case "signup": 
+            renderSignup();
+            break;
+
         default:
             content.innerHTML = "<h1>Welcome to SmartBank</h1>";
     }
+}
+
+function renderSignup() {
+    content.innerHTML = `
+        <div class="signup-container">
+            <h1>Create your account</h1>
+
+            <form id="signup-form">
+
+                <div>
+                    <label for="name">Name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label for="email">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                    >
+                </div>
+
+                <button type="submit">Create account</button>
+
+            </form>
+
+            <p id="signup-message"></p>
+        </div>
+    `;
+
+        const form = document.querySelector("#signup-form");
+
+    form.addEventListener("submit", handleSignup);
+}
+
+function handleSignup(event) {
+    event.preventDefault();
+
+    const name = document.querySelector("#name").value;
+    const email = document.querySelector("#email").value;
+    const password = document.querySelector("#password").value;
+
+    const users = getData("smartbank_users");
+
+    const emailExists = users.some(user => user.email === email);
+
+    if (emailExists) {
+        document.querySelector("#signup-message").textContent =
+            "Cet email est déjà utilisé.";
+        return;
+    }
+
+    const newUser = {
+        id: Date.now(),
+        name: name,
+        email: email,
+        password: password,
+        createdAt: new Date().toISOString()
+    };
+
+    addData("smartbank_users", newUser);
+
+    document.querySelector("#signup-message").textContent =
+        "Compte créé avec succès !";
+
+    event.target.reset();
 }
 
 window.addEventListener("hashchange", renderPage);
