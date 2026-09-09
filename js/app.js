@@ -1,5 +1,5 @@
 import "./seed.js";
-import {getData , addData} from "./storage.js";
+import {getData , addData, saveData, clearData} from "./storage.js";
 const content = document.querySelector("#content");
 
 function renderPage() {
@@ -36,6 +36,10 @@ function renderPage() {
 
         case "signup": 
             renderSignup();
+            break;
+            
+        case "signin":
+            renderSignin();
             break;
 
         default:
@@ -124,6 +128,77 @@ function handleSignup(event) {
         "Compte créé avec succès !";
 
     event.target.reset();
+}
+
+function renderSignin() {
+    content.innerHTML = `
+        <div class="signin-container">
+            <h1>Welcome back</h1>
+
+            <form id="signin-form">
+
+                <div>
+                    <label for="signin-email">Email</label>
+                    <input
+                        type="email"
+                        id="signin-email"
+                        name="email"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label for="signin-password">Password</label>
+                    <input
+                        type="password"
+                        id="signin-password"
+                        name="password"
+                        required
+                    >
+                </div>
+
+                <button type="submit">Sign In</button>
+
+            </form>
+
+            <p id="signin-message"></p>
+        </div>
+    `;
+
+    const form = document.querySelector("#signin-form");
+
+    form.addEventListener("submit", handleSignin);
+}
+
+function handleSignin(event) {
+    event.preventDefault();
+
+    const email = document.querySelector("#signin-email").value;
+    const password = document.querySelector("#signin-password").value;
+
+    const users = getData("smartbank_users");
+
+    const user = users.find(
+        user => user.email === email && user.password === password
+    );
+
+    if (!user) {
+        document.querySelector("#signin-message").textContent =
+            "Email ou mot de passe incorrect.";
+        return;
+    }
+
+    localStorage.setItem(
+        "smartbank_current_user",
+        JSON.stringify(user)
+    );
+
+    window.location.hash = "dashboard";
+}
+
+function logout(){
+    clearData("smart_bank_curent_user");
+    window.location.hash = "signin";
 }
 
 window.addEventListener("hashchange", renderPage);
