@@ -2,12 +2,43 @@ import "./seed.js";
 import {getData , addData, saveData, clearData} from "./storage.js";
 const content = document.querySelector("#content");
 
+
+function getCurrentUser() {
+    const user = localStorage.getItem("smartbank_current_user");
+
+    return user ? JSON.parse(user) : null;
+}
+
 function renderPage() {
     const page = window.location.hash.substring(1);
-//location represente l'url actuel , window = window of brower , .hash = #... , start with the second letter
+    //location represente l'url actuel , window = window of brower , .hash = #... , start with the second letter
+    const currentUser = getCurrentUser();
+
+    const protectedPages = [
+        "dashboard",
+        "offers",
+        "credit",
+        "rewards",
+        "flash-sales",
+        "profile",
+        "history"
+    ];
+
+    if (protectedPages.includes(page) && !currentUser) {
+        window.location.hash = "signin";
+        return;
+    }
     switch (page) {
         case "dashboard":
-            content.innerHTML = "<h1>Dashboard</h1>";
+            content.innerHTML = `
+                <h1>Dashboard</h1>
+                <button id="logout-btn">Logout</button>
+            `;
+
+            document
+                .querySelector("#logout-btn")
+                .addEventListener("click", logout);
+
             break;
 
         case "offers":
@@ -197,7 +228,7 @@ function handleSignin(event) {
 }
 
 function logout(){
-    clearData("smart_bank_curent_user");
+    clearData("smartbank_current_user");
     window.location.hash = "signin";
 }
 
