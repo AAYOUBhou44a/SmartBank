@@ -29,10 +29,111 @@ function renderPage() {
         return;
     }
     switch (page) {
-        case "dashboard":
+        case "dashboard": {
+            const currentUser = getCurrentUser();
+
+            // Récupérer les données
+            const simulations = getData("smartbank_simulations");
+            const rewards = getData("smartbank_rewards");
+            const history = getData("smartbank_history");
+
+            // Garder seulement les données de l'utilisateur connecté
+            const userSimulations = simulations.filter(
+                simulation => simulation.userId === currentUser.id
+            );
+
+            const userRewards = rewards.filter(
+                reward => reward.userId === currentUser.id
+            );
+
+            const userHistory = history.filter(
+                item => item.userId === currentUser.id
+            );
+
+            // Les 5 dernières activités
+            const recentHistory = userHistory.slice(-5).reverse();
+
             content.innerHTML = `
-                <h1>Dashboard</h1>
-                <button id="logout-btn">Logout</button>
+                <section class="dashboard">
+
+                    <div class="dashboard-header">
+                        <div>
+                            <h1>Welcome, ${currentUser.name} 👋</h1>
+                            <p>Voici un résumé de votre activité.</p>
+                        </div>
+
+                        <button id="logout-btn">Logout</button>
+                    </div>
+
+                    <div class="cards">
+
+                        <div class="card">
+                            <h3>Credit Simulations</h3>
+                            <p class="stat">
+                                ${userSimulations.length}
+                            </p>
+                        </div>
+
+                        <div class="card">
+                            <h3>Rewards</h3>
+                            <p class="stat">
+                                ${userRewards.length}
+                            </p>
+                        </div>
+
+                        <div class="card">
+                            <h3>Activities</h3>
+                            <p class="stat">
+                                ${userHistory.length}
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="card recent-activity">
+                        <h2>Recent Activity</h2>
+
+                        ${
+                            recentHistory.length > 0
+                                ? `
+                                    <ul>
+                                        ${recentHistory.map(item => `
+                                            <li>
+                                                <strong>${item.action}</strong>
+                                                <span>${item.description}</span>
+                                            </li>
+                                        `).join("")}
+                                    </ul>
+                                `
+                                : `
+                                    <p>No recent activity.</p>
+                                `
+                        }
+
+                    </div>
+
+                    <div class="card profile-summary">
+                        <h2>My Profile</h2>
+
+                        <p>
+                            <strong>Name:</strong>
+                            ${currentUser.name}
+                        </p>
+
+                        <p>
+                            <strong>Email:</strong>
+                            ${currentUser.email}
+                        </p>
+
+                        <p>
+                            <strong>Created at:</strong>
+                            ${new Date(
+                                currentUser.createdAt
+                            ).toLocaleDateString("fr-FR")}
+                        </p>
+                    </div>
+
+                </section>
             `;
 
             document
@@ -40,6 +141,7 @@ function renderPage() {
                 .addEventListener("click", logout);
 
             break;
+        }
 
         case "offers":
             content.innerHTML = "<h1>Offers</h1>";
