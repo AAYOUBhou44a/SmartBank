@@ -53,6 +53,7 @@ function renderPage() {
             // Les 5 dernières activités
             const recentHistory = userHistory.slice(-5).reverse();
 
+
             content.innerHTML = `
                 <section class="dashboard">
 
@@ -143,9 +144,38 @@ function renderPage() {
             break;
         }
 
-        case "offers":
-            content.innerHTML = "<h1>Offers</h1>";
+        case "offers": {
+            const offers = getData("smartbank_offers");
+
+            content.innerHTML = `
+                <h1>Offers</h1>
+
+                <div class="cards">
+                    ${offers.map(offer => `
+                        <div class="card">
+                            <h2>${offer.title}</h2>
+
+                            <p>
+                                <strong>Description:</strong>
+                                ${offer.description}
+                            </p>
+
+                            <p>
+                                <strong>Interest rate:</strong>
+                                ${offer.interestRate}%
+                            </p>
+
+                            <p>
+                                <strong>Maximum amount:</strong>
+                                ${offer.maxAmount} DH
+                            </p>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+
             break;
+        }
 
         case "credit":
             content.innerHTML = "<h1>Credit Simulator</h1>";
@@ -155,9 +185,39 @@ function renderPage() {
             content.innerHTML = "<h1>Rewards</h1>";
             break;
 
-        case "flash-sales":
-            content.innerHTML = "<h1>Flash Sales</h1>";
+        case "flash-sales": {
+    const flashSales = getData("smartbank_flash_sales");
+
+            content.innerHTML = `
+                <h1>Flash Sales</h1>
+
+                <div class="cards">
+                    ${flashSales.map(flashSale => `
+                        <div class="card flash-sale-card">
+
+                            <h2>${flashSale.title}</h2>
+
+                            <p>
+                                <strong>Description:</strong><br>
+                                ${flashSale.description}
+                            </p>
+
+                            <span class="flash-sale-discount">
+                                -${flashSale.discount}%
+                            </span>
+
+                            <div class="flash-sale-end">
+                                <strong>End At:</strong>
+                                ${new Date(flashSale.endAt).toLocaleString("fr-FR")}
+                            </div>
+
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+
             break;
+        }
 
         case "profile":
             content.innerHTML = "<h1>Profile</h1>";

@@ -386,3 +386,87 @@ button:active {
 .profile-summary strong {
     color: var(--text);
 }
+
+/* =========================
+   OFFERS & FLASH SALES
+========================= */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 30px;
+}
+
+.card {
+    padding: 25px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.06);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+}
+
+.card h2 {
+    margin-bottom: 18px;
+    font-size: 20px;
+}
+
+.card p {
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+.card strong {
+    color: var(--text);
+}
+
+
+/* =========================
+   FLASH SALES
+========================= */
+
+.flash-sale-card {
+    position: relative;
+    border: 1px solid #fecaca;
+}
+
+.flash-sale-card h2 {
+    color: #dc2626;
+}
+
+.flash-sale-discount {
+    display: inline-block;
+
+    margin-top: 15px;
+    padding: 6px 12px;
+
+    background: #fee2e2;
+    color: #dc2626;
+
+    border-radius: 20px;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.flash-sale-end {
+    margin-top: 18px;
+    padding-top: 15px;
+
+    border-top: 1px solid var(--border);
+}
+
+.flash-sale-end strong {
+    display: block;
+    margin-bottom: 5px;
+}
