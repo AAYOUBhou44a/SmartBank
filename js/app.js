@@ -178,7 +178,7 @@ function renderPage() {
         }
 
         case "credit":
-            content.innerHTML = "<h1>Credit Simulator</h1>";
+            renderCredit();
             break;
 
         case "rewards":
@@ -223,9 +223,51 @@ function renderPage() {
             content.innerHTML = "<h1>Profile</h1>";
             break;
 
-        case "history":
-            content.innerHTML = "<h1>History</h1>";
+        case "history": {
+            const currentUser = getCurrentUser();
+
+            const history = getData("smartbank_history");
+
+            const userHistory = history
+                .filter(item => item.userId === currentUser.id)
+                .reverse();
+
+            content.innerHTML = `
+                <section class="history-page">
+                    <h1>History</h1>
+                    <p>Voici vos dernières activités.</p>
+
+                    ${
+                        userHistory.length > 0
+                            ? `
+                                <div class="history-list">
+                                    ${userHistory.map(item => `
+                                        <div class="history-item">
+
+                                            <div>
+                                                <h3>${item.action}</h3>
+                                                <p>${item.description}</p>
+                                            </div>
+
+                                            <span>
+                                                ${new Date(item.date).toLocaleString("fr-FR")}
+                                            </span>
+
+                                        </div>
+                                    `).join("")}
+                                </div>
+                            `
+                            : `
+                                <div class="card empty-history">
+                                    <p>Aucune activité pour le moment.</p>
+                                </div>
+                            `
+                    }
+                </section>
+            `;
+
             break;
+        }
 
         case "signup": 
             renderSignup();
@@ -239,6 +281,155 @@ function renderPage() {
             content.innerHTML = "<h1>Welcome to SmartBank</h1>";
     }
 }
+
+function renderCredit() {
+    content.innerHTML = `
+        <section class="credit-page">
+
+            <h1>Credit Simulator</h1>
+            <p>Simulez votre crédit en quelques secondes.</p>
+
+            <form id="credit-form">
+
+                <div>
+                    <label for="amount">Amount (DH)</label>
+                    <input
+                        type="number"
+                        id="amount"
+                        min="1000"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label for="duration">Duration (months)</label>
+                    <input
+                        type="number"
+                        id="duration"
+                        min="1"
+                        max="360"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label for="rate">Interest rate (%)</label>
+                    <input
+                        type="number"
+                        id="rate"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+                </div>
+
+                <button type="submit">
+                    Calculate
+                </button>
+
+            </form>
+
+            <div id="credit-result"></div>
+
+        </section>
+    `;
+
+    const form = document.querySelector("#credit-form");
+
+    form.addEventListener("submit", handleCreditSimulation);
+}
+
+function calculateMonthlyPayment(amount, duration, rate) {
+    const monthlyRate = rate / 100 / 12;
+
+    if (monthlyRate === 0) {
+        return amount / duration;
+    }
+
+    const monthlyPayment =
+        amount *
+        monthlyRate *
+        Math.pow(1 + monthlyRate, duration) /
+        (Math.pow(1 + monthlyRate, duration) - 1);
+
+    return monthlyPayment;
+}
+
+function handleCreditSimulation(event) {
+    event.preventDefault();
+
+    const currentUser = getCurrentUser();
+
+    const amount = Number(
+        document.querySelector("#amount").value
+    );
+
+    const duration = Number(
+        document.querySelector("#duration").value
+    );
+
+    const rate = Number(
+        document.querySelector("#rate").value
+    );
+
+    const monthlyPayment = calculateMonthlyPayment(
+        amount,
+        duration,
+        rate
+    );
+
+    const simulation = {
+        id: Date.now(),
+        userId: currentUser.id,
+        amount: amount,
+        duration: duration,
+        rate: rate,
+        monthlyPayment: Number(monthlyPayment.toFixed(2)),
+        createdAt: new Date().toISOString()
+    };
+
+    addData("smartbank_simulations", simulation);
+
+    const historyItem = {
+        id: Date.now() + 1,
+        userId: currentUser.id,
+        action: "CREDIT_SIMULATION",
+        description: `Simulation de crédit de ${amount} DH`,
+        date: new Date().toISOString()
+    };
+
+    addData("smartbank_history", historyItem);
+
+    document.querySelector("#credit-result").innerHTML = `
+        <div class="card credit-result">
+            <h2>Simulation Result</h2>
+
+            <p>
+                <strong>Amount:</strong>
+                ${amount.toLocaleString("fr-FR")} DH
+            </p>
+
+            <p>
+                <strong>Duration:</strong>
+                ${duration} months
+            </p>
+
+            <p>
+                <strong>Interest rate:</strong>
+                ${rate}%
+            </p>
+
+            <p class="monthly-payment">
+                <strong>Monthly payment:</strong>
+                ${monthlyPayment.toFixed(2)} DH
+            </p>
+        </div>
+    `;
+
+    event.target.reset();
+}
+
+
 
 function renderSignup() {
     content.innerHTML = `

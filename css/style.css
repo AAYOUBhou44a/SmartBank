@@ -470,3 +470,100 @@ button:active {
     display: block;
     margin-bottom: 5px;
 }
+
+/* =========================
+   CREDIT SIMULATOR
+========================= */
+
+.credit-page {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.credit-page > p {
+    margin-bottom: 30px;
+}
+
+.credit-page form {
+    padding: 30px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.06);
+}
+
+.credit-result {
+    margin-top: 30px;
+}
+
+.credit-result p {
+    margin-top: 12px;
+}
+
+.monthly-payment {
+    margin-top: 20px !important;
+    padding-top: 20px;
+
+    border-top: 1px solid var(--border);
+
+    font-size: 20px;
+    color: var(--primary) !important;
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+.history-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.history-page > p {
+    margin-bottom: 30px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    padding: 20px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+}
+
+.history-item h3 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.history-item p {
+    margin: 0;
+}
+
+.history-item span {
+    color: var(--text-light);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.empty-history {
+    text-align: center;
+    padding: 40px;
+}
