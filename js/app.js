@@ -182,7 +182,7 @@ function renderPage() {
             break;
 
         case "rewards":
-            content.innerHTML = "<h1>Rewards</h1>";
+            renderRewards();
             break;
 
         case "flash-sales": {
@@ -281,6 +281,96 @@ function renderPage() {
             content.innerHTML = "<h1>Welcome to SmartBank</h1>";
     }
 }
+
+function renderRewards() {
+    content.innerHTML = `
+        <section class="rewards-page">
+
+            <h1>Rewards</h1>
+            <p>Tournez la roue et tentez de gagner une récompense.</p>
+
+            <div class="spinner-container">
+
+                <div class="pointer">▼</div>
+
+                <div class="spinner" id="spinner">
+                    <div class="reward reward-1">10 DH</div>
+                    <div class="reward reward-2">20 DH</div>
+                    <div class="reward reward-3">Coupon TEMU</div>
+                    <div class="reward reward-4">50 Points</div>
+                    <div class="reward reward-5">5 DH</div>
+                    <div class="reward reward-6">10% OFF</div>
+                </div>
+
+            </div>
+
+            <button id="spin-btn">SPIN</button>
+
+            <p id="reward-result"></p>
+
+        </section>
+    `;
+
+    document
+        .querySelector("#spin-btn")
+        .addEventListener("click", handleSpin);
+}
+
+function handleSpin() {
+    const currentUser = getCurrentUser();
+    const spinButton = document.querySelector("#spin-btn");
+
+    spinButton.disabled = true;
+
+    const rewards = [
+        "10 DH",
+        "20 DH",
+        "Coupon TEMU",
+        "50 Points",
+        "5 DH",
+        "10% OFF"
+    ];
+
+    const randomIndex = Math.floor(Math.random() * rewards.length);
+                     //  1.38 → 1     (0..1)
+    const selectedReward = rewards[randomIndex];
+
+    const rotation = 360 * 5 + randomIndex * 60;
+
+    const spinner = document.querySelector("#spinner");
+
+    spinner.style.transform = `rotate(${rotation}deg)`;
+
+    setTimeout(() => {
+
+        const reward = {
+            id: Date.now(),
+            userId: currentUser.id,
+            name: selectedReward,
+            type: "reward",
+            wonAt: new Date().toISOString()
+        };
+
+        addData("smartbank_rewards", reward);
+
+        const historyItem = {
+            id: Date.now() + 1,
+            userId: currentUser.id,
+            action: "REWARD_WON",
+            description: `Récompense gagnée : ${selectedReward}`,
+            date: new Date().toISOString()
+        };
+
+        addData("smartbank_history", historyItem);
+
+        document.querySelector("#reward-result").textContent =
+            `🎉 Félicitations ! Vous avez gagné : ${selectedReward}`;
+
+        spinButton.disabled = false;
+
+    }, 3000);
+}
+
 
 function renderCredit() {
     content.innerHTML = `
