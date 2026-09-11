@@ -430,19 +430,10 @@ function renderCredit() {
 }
 
 function calculateMonthlyPayment(amount, duration, rate) {
-    const monthlyRate = rate / 100 / 12;
+    const totalInterest = amount * (rate / 100);
+    const totalAmount = amount + totalInterest;
 
-    if (monthlyRate === 0) {
-        return amount / duration;
-    }
-
-    const monthlyPayment =
-        amount *
-        monthlyRate *
-        Math.pow(1 + monthlyRate, duration) /
-        (Math.pow(1 + monthlyRate, duration) - 1);
-
-    return monthlyPayment;
+    return totalAmount / duration;
 }
 
 function handleCreditSimulation(event) {
