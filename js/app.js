@@ -220,7 +220,7 @@ function renderPage() {
         }
 
         case "profile":
-            content.innerHTML = "<h1>Profile</h1>";
+            renderProfile();
             break;
 
         case "history": {
@@ -281,6 +281,99 @@ function renderPage() {
             content.innerHTML = "<h1>Welcome to SmartBank</h1>";
     }
 }
+
+function renderProfile() {
+    const currentUser = getCurrentUser();
+
+    content.innerHTML = `
+        <section class="profile-page">
+
+            <h1>My Profile</h1>
+            <p>Gérez vos informations personnelles.</p>
+
+            <form id="profile-form">
+
+                <div>
+                    <label for="profile-name">Name</label>
+                    <input
+                        type="text"
+                        id="profile-name"
+                        value="${currentUser.name}"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label for="profile-email">Email</label>
+                    <input
+                        type="email"
+                        id="profile-email"
+                        value="${currentUser.email}"
+                        required
+                    >
+                </div>
+
+                <button type="submit">
+                    Save changes
+                </button>
+
+            </form>
+
+            <p id="profile-message"></p>
+
+        </section>
+    `;
+
+    const form = document.querySelector("#profile-form");
+
+    form.addEventListener("submit", handleProfileUpdate);
+}
+
+function handleProfileUpdate(event) {
+    event.preventDefault();
+
+    const currentUser = getCurrentUser();
+
+    const name = document.querySelector("#profile-name").value;
+    const email = document.querySelector("#profile-email").value;
+
+    const users = getData("smartbank_users");
+
+    const emailExists = users.some(
+        user => user.email === email && user.id !== currentUser.id
+    );
+
+    if (emailExists) {
+        document.querySelector("#profile-message").textContent =
+            "Cet email est déjà utilisé.";
+
+        return;
+    }
+
+    const updatedUser = {
+        ...currentUser,
+        name: name,
+        email: email,
+        updatedAt: new Date().toISOString()
+    };
+
+    const updatedUsers = users.map(user =>
+        user.id === currentUser.id
+            ? updatedUser
+            : user
+    );
+
+    saveData("smartbank_users", updatedUsers);
+
+    localStorage.setItem(
+        "smartbank_current_user",
+        JSON.stringify(updatedUser)
+    );
+
+    document.querySelector("#profile-message").textContent =
+        "Profil mis à jour avec succès.";
+}
+
 
 function renderRewards() {
     content.innerHTML = `

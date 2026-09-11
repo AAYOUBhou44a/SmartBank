@@ -882,3 +882,30 @@ button:active {
         border-top-width: 27px;
     }
 }
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile-page {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.profile-page > p {
+    margin-bottom: 30px;
+}
+
+.profile-page form {
+    padding: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.06);
+}
+
+#profile-message {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 600;
+}
